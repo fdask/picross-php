@@ -11,7 +11,7 @@ class Picross {
     public $term;
     
     public function __construct() {
-        // reset highlighted position
+        // reset game
         $this->playerX = 0;
         $this->playerY = 0;
         $this->misses = 0;
@@ -19,7 +19,7 @@ class Picross {
         $this->viewActual = false;
 
         // set the size
-        $this->size = rand(5, 10);
+        $this->size = rand(Config::$sizeMin, Config::$sizeMax);
 
         // populate the coords with squares
         for ($x = 0; $x < $this->size; $x++) {
@@ -32,12 +32,12 @@ class Picross {
             }
         }
 
-        // set actual on those squares, randomly
-        
+        // save the term
         $this->term = `stty -g`;
-		system("stty -icanon -echo");
-
-		echo "\n" . $this . "\n";
+        system("stty -icanon -echo");
+        
+        // initial gameboard print
+        echo "\n" . $this . "\n";
 
         // enter an endless loop waiting for keypress
         while (1) {
