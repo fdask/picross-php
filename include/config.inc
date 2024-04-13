@@ -4,7 +4,7 @@ class Config {
 
     public static $sizeMin = 5;
     public static $sizeMax = 10;
-    
+
     public static $maxMisses = 3;
 
     public static function enter() {
@@ -58,22 +58,22 @@ class Config {
     }
 
     public static function waitForInput() {
-		$input = '';
+        $input = '';
 
-		$read = [STDIN];
-		$write = null;
-		$except = null;
+	    $read = [STDIN];
+        $write = null;
+        $except = null;
 
-		readline_callback_handler_install('', function() {});
+        readline_callback_handler_install('', function() {});
 
-		// Read characters from the command line one at a time until there aren't any more to read
-		do {
-			$input .= fgetc(STDIN);
-		} while (stream_select($read, $write, $except, 0, 1));
+        // Read characters from the command line one at a time until there aren't any more to read
+        do {
+            $input .= fgetc(STDIN);
+        } while (stream_select($read, $write, $except, 0, 1));
 
-		readline_callback_handler_remove();
+        readline_callback_handler_remove();
 
-		return $input;
+        return $input;
 	}
 }
 
