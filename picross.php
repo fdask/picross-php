@@ -2,5 +2,4 @@
 <?php
 include 'include/config.inc';
 
-$p = new Picto();
-
+$p = new Picross();

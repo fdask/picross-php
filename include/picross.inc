@@ -1,6 +1,6 @@
 <?php
-// the game of picto
-class Picto {
+// the game of picross
+class Picross {
     public $size;    
     public $coords;
     public $playerX;
