@@ -12,7 +12,7 @@ Find all the marked squares using the numbers along
 the edge of the board.  Too many misses and you lose!
 
 ## To Play
-Run picto.php.
+Run picross.php.
 
 Size and number of misses are randomized each run.
 
