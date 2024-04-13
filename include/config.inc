@@ -60,7 +60,7 @@ class Config {
     public static function waitForInput() {
         $input = '';
 
-	    $read = [STDIN];
+        $read = [STDIN];
         $write = null;
         $except = null;
 
@@ -74,7 +74,7 @@ class Config {
         readline_callback_handler_remove();
 
         return $input;
-	}
+    }
 }
 
 spl_autoload_register("Config::autoload");
