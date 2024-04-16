@@ -8,6 +8,7 @@ class Picross {
     public $misses;
     public $maxMisses;
     public $viewActual;
+    public $filename;
     public $term;
     
     public function __construct($filename = null) {
@@ -17,10 +18,11 @@ class Picross {
         $this->misses = 0;
         $this->maxMisses = rand(0, Config::$maxMisses);
         $this->viewActual = false;
-
+        $this->filename = null;
         $loaded = false;
 
         if (!is_null($filename) && file_exists($filename)) {
+            $this->filename = $filename;
             $f = file($filename);
 
             $this->size = count($f);
@@ -225,7 +227,7 @@ class Picross {
         if (empty($ret)) {
             $ret[] = "0";
         }
-        
+
         return $ret;
     }
 
@@ -404,7 +406,12 @@ class Picross {
             $ret .= "\n";
         }
 
-        $ret .= "misses: " . $this->misses . " / " . $this->maxMisses . "\n";
+        $ret .= "misses: " . $this->misses . "/" . ($this->maxMisses + 1) . " ";
+        $ret .= "map: " . (is_null($this->filename) ? "random" : $this->filename) . " ";
+        $ret .= count($this->coords) . "x" . count($this->coords) . " ";
+        $ret .= "X: " . $this->playerY . " ";
+        $ret .= "Y: " . $this->playerX;
+        $ret .= "\n";
 
         return $ret;
     }
