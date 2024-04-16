@@ -2,10 +2,10 @@
 class Config {
     public static $debug = false;
 
-    public static $sizeMin = 5;
-    public static $sizeMax = 10;
+    public static $sizeMin = 10;
+    public static $sizeMax = 20;
 
-    public static $maxMisses = 3;
+    public static $maxMisses = 8;
 
     public static function enter() {
         return chr(10);
