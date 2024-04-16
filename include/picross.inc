@@ -10,7 +10,7 @@ class Picross {
     public $viewActual;
     public $term;
     
-    public function __construct() {
+    public function __construct($filename = null) {
         // reset game
         $this->playerX = 0;
         $this->playerY = 0;
@@ -18,17 +18,43 @@ class Picross {
         $this->maxMisses = rand(0, Config::$maxMisses);
         $this->viewActual = false;
 
-        // set the size
-        $this->size = rand(Config::$sizeMin, Config::$sizeMax);
+        $loaded = false;
 
-        // populate the coords with squares
-        for ($x = 0; $x < $this->size; $x++) {
-            if (!isset($this->coords[$x])) {
+        if (!is_null($filename) && file_exists($filename)) {
+            $f = file($filename);
+
+            $this->size = count($f);
+
+            for ($x = 0; $x < $this->size; $x++) {
                 $this->coords[$x] = array();
-            }
 
-            for ($y = 0; $y < $this->size; $y++) {
-                $this->coords[$x][$y] = new Square(rand(0, 1));
+                $chars = str_split($f[$x]);
+
+                for ($y = 0; $y < $this->size; $y++) {
+                    if ($chars[$y] == "X") {
+                        $this->coords[$x][$y] = new Square(1);
+                    } else {
+                        $this->coords[$x][$y] = new Square(0);
+                    }
+                }
+            }
+            
+            $loaded = true;
+        }
+
+        if (!$loaded) {
+            // set the size
+            $this->size = rand(Config::$sizeMin, Config::$sizeMax);
+
+            // populate the coords with squares
+            for ($x = 0; $x < $this->size; $x++) {
+                if (!isset($this->coords[$x])) {
+                    $this->coords[$x] = array();
+                }
+
+                for ($y = 0; $y < $this->size; $y++) {
+                    $this->coords[$x][$y] = new Square(rand(0, 1));
+                }
             }
         }
 
@@ -259,7 +285,8 @@ class Picross {
         $ret = "";
 
         // need to get all the column segments
-        $segs = array();
+        $color = array();
+        $noColor = array();
 
         $highCount = 0;
 
@@ -267,27 +294,31 @@ class Picross {
             $selected = $this->getColSegs($x);
             $actual = $this->getActualColSegs($x);
             
-            $cnums = $this->compareRowAndActual($selected, $actual);
+            $noColor[$x] = $this->compareRowAndActual($selected, $actual);
+            $color[$x] = $this->compareRowAndActual($selected, $actual, true);
 
-            if (count($cnums) > $highCount) {
-                $highCount = count($cnums);
+            if (count($color[$x]) > $highCount) {
+                $highCount = count($color[$x]);
             }
-
-            $segs[] = $cnums;
         }
 
         for ($row = $highCount; $row > 0; $row--) {
             $ret .= $buffer;
+            
+            $last = 0;
+
             for ($x = 0; $x < $this->size; $x++) {
                 $ret .= " ";
 
-                if (count($segs[$x]) == $row) {
-                    $ret .= array_shift($segs[$x]);
-                } else {
+                if (isset($color[$x]) && count($color[$x]) == $row) {
+                    $lastCol = array_shift($color[$x]);
+                    $last = array_shift($noColor[$x]);
+                    $ret .= $lastCol;
+                } 
+
+                if ($last < 9) {
                     $ret .= " ";
                 }
-
-                $ret .= " ";
             }
 
             $ret .= "\n";

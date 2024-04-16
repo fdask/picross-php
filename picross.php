@@ -2,4 +2,10 @@
 <?php
 include 'include/config.inc';
 
-$p = new Picross();
+$filename = null;
+
+if (isset($argv[1])) {
+    $filename = $argv[1];
+}
+
+$p = new Picross($filename);
