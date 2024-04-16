@@ -222,6 +222,10 @@ class Picross {
             }
         }
 
+        if (empty($ret)) {
+            $ret[] = "0";
+        }
+        
         return $ret;
     }
 
@@ -314,9 +318,12 @@ class Picross {
                     $lastCol = array_shift($color[$x]);
                     $last = array_shift($noColor[$x]);
                     $ret .= $lastCol;
-                } 
+                } else {
+                    $ret .= " ";
+                    $last = 0;
+                }
 
-                if ($last < 9) {
+                if ($last <= 9) {
                     $ret .= " ";
                 }
             }
