@@ -157,7 +157,7 @@ class Picross {
         exit;
     }
 
-    public function compareRowAndActual($row, $actual) {
+    public function compareRowAndActual($row, $actual, $colors = false) {
         $started = false;
         $xs = array();
         $matched = true;
@@ -176,7 +176,7 @@ class Picross {
 
                 // check to see if we have a match
                 if (count($xs) > 0) {
-                    if ($matched) {
+                    if ($matched && $colors) {
                         $ret[] = Colors::fg_color('green', count($xs));
                     } else {
                         $ret[] = count($xs);
@@ -189,7 +189,7 @@ class Picross {
         }
 
         if ($started && count($xs) > 0) {
-            if ($matched) {
+            if ($matched && $colors) {
                 $ret[] = Colors::fg_color('green', count($xs));
             } else {
                 $ret[] = count($xs);
@@ -301,44 +301,43 @@ class Picross {
 
         // prepare the leftwards data
         $highCount = 0;
-        $leftwards = array();
-
+        $leftLines = array();
+        $colorLeftLines = array();
         
         for ($x = 0; $x < $this->size; $x++) {
             $selected = $this->getRowSegs($x);
             $actual = $this->getActualRowSegs($x);
             
-            $rNums = $this->compareRowAndActual($selected, $actual);
+            $colorLeftLines[] = implode(" ", $this->compareRowAndActual($selected, $actual, true));
+            $leftLines[] = implode(" ", $this->compareRowAndActual($selected, $actual));
+        }
 
-            if (count($rNums) > $highCount) {
-                $highCount = count($rNums);
+        $padLength = 0;
+
+        for ($x = 0; $x < count($leftLines); $x++) {
+            if (strlen($leftLines[$x]) > $padLength) {
+                $padLength = strlen($leftLines[$x]);
             }
-
-            $segs[] = $rNums;
         }
 
-        $buffer = "";
+        $buffer = " ";
 
-        for ($x = 0; $x < $highCount; $x++) {
-            $buffer .= "  ";
+        for ($b = 0; $b < $padLength; $b++) {
+            $buffer = $buffer . " ";
         }
-        
+
         // add the header
         $ret .= $this->header($buffer);
 
         // add the main block
         for ($x = 0; $x < count($this->coords); $x++) {
-            $left = implode(" ", $segs[$x]) . " ";
-            
-            $leftlen = (count($segs[$x]) * 2) + 1;
+            $left = "";
 
-            if ($leftlen < strlen($buffer)) {
-                for ($i = strlen($buffer) - $leftlen; $i >= 0; $i--) {
-                    $left = " " . $left;
-                }
+            for ($spaceCount = 0; (strlen($leftLines[$x]) + $spaceCount) < $padLength; $spaceCount++) {
+                $colorLeftLines[$x] = " " . $colorLeftLines[$x];
             }
-
-            $ret .= $left;
+            
+            $ret .= $colorLeftLines[$x] . " ";
 
             for ($y = 0; $y < count($this->coords[0]); $y++) {
                 if ($x == $this->playerX && $y == $this->playerY) {
